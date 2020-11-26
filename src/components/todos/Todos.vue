@@ -2,8 +2,8 @@
   <div v-if="todos.length">
       <transition-group name="todos">
           <div v-for="todo in todos" :key="todo._id">
-              <Todo v-if="sortValue === ''" :todo="todo" @delete-todo="$emit('delete-todo', todo._id)" />
-              <Todo v-else-if="sortValue === todo.completed" :todo="todo" @delete-todo="$emit('delete-todo', todo._id)" />
+              <Todo v-if="sortValue === ''" :todo="todo" @delete-todo="$emit('delete-todo', todo._id)" @toggle-complete="$emit('toggle-complete', todo._id)" />
+              <Todo v-else-if="sortValue === todo.completed" :todo="todo" @delete-todo="$emit('delete-todo', todo._id)" @toggle-complete="$emit('toggle-complete', todo._id)" />
           </div>
       </transition-group>
   </div>

@@ -3,7 +3,7 @@
     <NavBar />
     <AddTodo @add-todo="addTodo" @sort="sortTodos" />
     <div class="container">
-      <Todos :todos="todos" :sortValue="sort" @delete-todo="deleteTodo"/>
+      <Todos :todos="todos" :sortValue="sort" @delete-todo="deleteTodo" @toggle-complete="updateTodo"/>
     </div>
   </div>
 </template>
@@ -22,28 +22,50 @@ export default {
   },
   data(){
     return {
-      todos: [
-        {_id: uuidv4(), title: "Todo item 1", completed: false},
-        {_id: uuidv4(), title: "Todo item 2", completed: false},
-        {_id: uuidv4(), title: "Todo item 3", completed: false},
-        {_id: uuidv4(), title: "Todo item 4", completed: false},
-        {_id: uuidv4(), title: "Todo item 5", completed: false},
-        {_id: uuidv4(), title: "Todo item 6", completed: false},
-      ],
+      todos: [],
       sort: ''
     }
   },
   methods: {
     addTodo(title){
       const newTodo = {
-        _id: uuidv4(),
-        title: title,
-        completed: false
+          _id: uuidv4(),
+          title: title,
+          completed: false
       };
-      this.todos.push(newTodo);
+
+      fetch('http://localhost:8080/api/todos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newTodo)
+      })
+      .then(() => this.fetchTodos())
+      .catch(err => console.log(err));
     },
     deleteTodo(todoId){
       this.todos = this.todos.filter(todo => todo._id !== todoId);
+      fetch(`http://localhost:8080/api/todos/${todoId}`, {
+        method: 'delete'
+      })
+      .then(() => this.fetchTodos())
+      .catch(err => console.log(err));
+    },
+    updateTodo(todoId){
+      let {completed } = this.todos.find(todo => todo._id === todoId);
+      completed = !completed;
+
+      fetch(`http://localhost:8080/api/todos/${todoId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ completed }),
+        headers: {
+          'Content-type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => { console.log(data); this.fetchTodos(); })
+      .catch(err => console.log(err))
     },
     sortTodos(value){
       switch(value){
@@ -56,7 +78,16 @@ export default {
         default:
           this.sort = ''
       }
+    },
+    fetchTodos(){
+      fetch('http://localhost:8080/api/todos')
+        .then(response => response.json())
+        .then(data => this.todos = data)
+        .catch(err => console.log(err));
     }
+  },
+  created(){
+    this.fetchTodos();
   }
 }
 </script>
