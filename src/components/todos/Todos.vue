@@ -25,7 +25,7 @@ export default {
 
 <style scoped>
     .todos-enter-active, .todos-leave-active {
-        transition: all 0.5 ease;
+        transition: all 0.5s ease;
     }
     .todos-enter {
         opacity: 0;
