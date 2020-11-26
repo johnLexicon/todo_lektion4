@@ -9,7 +9,7 @@
                   </div>
                   <div class="invalid-feedback">Please enter Todo</div>
               </div>
-              <select class="form-control col-4">
+              <select class="form-control col-4" v-model="select" @change="$emit('sort', select)">
                   <option value="">Show All</option>
                   <option value="false">Show uncompleted</option>
                   <option value="true">Show completed</option>
@@ -25,7 +25,8 @@ export default {
     data(){
         return {
             title: '',
-            error: false
+            error: false,
+            select: ''
         }
     },
     methods: {

@@ -1,9 +1,9 @@
 <template>
   <div>
     <NavBar />
-    <AddTodo @add-todo="addTodo"/>
+    <AddTodo @add-todo="addTodo" @sort="sortTodos" />
     <div class="container">
-      <Todos :todos="todos" @delete-todo="deleteTodo"/>
+      <Todos :todos="todos" :sortValue="sort" @delete-todo="deleteTodo"/>
     </div>
   </div>
 </template>
@@ -29,7 +29,8 @@ export default {
         {_id: uuidv4(), title: "Todo item 4", completed: false},
         {_id: uuidv4(), title: "Todo item 5", completed: false},
         {_id: uuidv4(), title: "Todo item 6", completed: false},
-      ]
+      ],
+      sort: ''
     }
   },
   methods: {
@@ -43,6 +44,18 @@ export default {
     },
     deleteTodo(todoId){
       this.todos = this.todos.filter(todo => todo._id !== todoId);
+    },
+    sortTodos(value){
+      switch(value){
+        case 'false':
+          this.sort = false;
+          break;
+        case 'true':
+          this.sort = true;
+          break;
+        default:
+          this.sort = ''
+      }
     }
   }
 }
