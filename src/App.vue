@@ -1,28 +1,53 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <NavBar />
+    <AddTodo @add-todo="addTodo"/>
+    <div class="container">
+      <Todos :todos="todos" @delete-todo="deleteTodo"/>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import { v4 as uuidv4 } from 'uuid';
+import NavBar from './components/NavBar';
+import Todos from './components/todos/Todos';
+import AddTodo from './components/todos/AddTodo';
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    NavBar,
+    Todos,
+    AddTodo
+  },
+  data(){
+    return {
+      todos: [
+        {_id: uuidv4(), title: "Todo item 1", completed: false},
+        {_id: uuidv4(), title: "Todo item 2", completed: false},
+        {_id: uuidv4(), title: "Todo item 3", completed: false},
+        {_id: uuidv4(), title: "Todo item 4", completed: false},
+        {_id: uuidv4(), title: "Todo item 5", completed: false},
+        {_id: uuidv4(), title: "Todo item 6", completed: false},
+      ]
+    }
+  },
+  methods: {
+    addTodo(title){
+      const newTodo = {
+        _id: uuidv4(),
+        title: title,
+        completed: false
+      };
+      this.todos.push(newTodo);
+    },
+    deleteTodo(todoId){
+      this.todos = this.todos.filter(todo => todo._id !== todoId);
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
