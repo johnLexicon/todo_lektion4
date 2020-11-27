@@ -88,10 +88,11 @@ export default {
       fetch('http://localhost:8080/api/todos')
         .then(response => response.json())
         .then(data => {
-          this.todos = data; this.downloaded = true
+          this.todos = data;
           // setTimeout(() => {this.todos = data; this.downloaded = true}, 2000) // Simulates slow connection
           })
-        .catch(err => {console.log(err); this.downloaded = true; });
+        .catch(err => console.log(err))
+        .finally(() => this.downloaded = true);
     }
   },
   created(){
