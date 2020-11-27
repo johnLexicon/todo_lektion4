@@ -3,7 +3,8 @@
     <NavBar />
     <AddTodo @add-todo="addTodo" @sort="sortTodos" />
     <div class="container">
-      <Todos :todos="todos" :sortValue="sort" @delete-todo="deleteTodo" @toggle-complete="updateTodo"/>
+      <Todos v-if="downloaded" :todos="todos" :sortValue="sort" @delete-todo="deleteTodo" @toggle-complete="updateTodo"/>
+      <Spinner v-else />
     </div>
   </div>
 </template>
@@ -13,17 +14,21 @@ import { v4 as uuidv4 } from 'uuid';
 import NavBar from './components/NavBar';
 import Todos from './components/todos/Todos';
 import AddTodo from './components/todos/AddTodo';
+import Spinner from './components/Spinner';
+
 export default {
   name: 'App',
   components: {
     NavBar,
     Todos,
-    AddTodo
+    AddTodo,
+    Spinner
   },
   data(){
     return {
       todos: [],
-      sort: ''
+      sort: '',
+      downloaded: false
     }
   },
   methods: {
@@ -45,7 +50,6 @@ export default {
       .catch(err => console.log(err));
     },
     deleteTodo(todoId){
-      this.todos = this.todos.filter(todo => todo._id !== todoId);
       fetch(`http://localhost:8080/api/todos/${todoId}`, {
         method: 'delete'
       })
@@ -80,10 +84,14 @@ export default {
       }
     },
     fetchTodos(){
+      this.downloaded = false;
       fetch('http://localhost:8080/api/todos')
         .then(response => response.json())
-        .then(data => this.todos = data)
-        .catch(err => console.log(err));
+        .then(data => {
+          this.todos = data; this.downloaded = true
+          // setTimeout(() => {this.todos = data; this.downloaded = true}, 2000) // Simulates slow connection
+          })
+        .catch(err => {console.log(err); this.downloaded = true; });
     }
   },
   created(){
